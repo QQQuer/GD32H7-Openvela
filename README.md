@@ -66,9 +66,14 @@ repo sync
 
 | 本仓路径 | 目标路径 |
 |---|---|
-| `board/contest_board/src/*` | `vendor/gigadevice/boards/gd32h7/gd32h759imt6/src/` |
-| `board/contest_board/nuttx/arch/arm/src/gd32h7xx/*` | `nuttx/arch/arm/src/gd32h7xx/` |
-| `board/contest_board/configs/nsh/defconfig` | `vendor/gigadevice/boards/gd32h7/gd32h759imt6/configs/nsh/defconfig` |
+> **重要：openvela SDK（dev-ai-contest-2026）不自带 GD32H7 芯片层与板卡层**（其 arch/arm/src 与 vendor/gigadevice/boards 仅含 gd32f4）。
+> 本仓已在 `board/contest_board/` 下打包了完整的 GD32H7 芯片层与板卡层（来自 Apache NuttX 主线，Apache-2.0），
+> 必须按下表整体复制，否则无法编译。
+
+| 本仓路径（整体复制目录） | 目标路径 |
+|---|---|
+| `board/contest_board/nuttx/arch/arm/src/gd32h7xx/`（完整芯片层：start/irq/serial/rcu/lowputc/timerisr/hardware 等 45 个文件） | `nuttx/arch/arm/src/gd32h7xx/` |
+| `board/contest_board/vendor/gigadevice/boards/gd32h7/gd32h759imt6/`（完整板卡层：src/configs/scripts/include 共 30 个文件） | `vendor/gigadevice/boards/gd32h7/gd32h759imt6/` |
 | `app/gui/*` | `apps/examples/gui/` |
 | `app/gt911_demo/*` | `apps/examples/gt911/` |
 | `app/lcd_demo/*` | `apps/examples/lcd/` |

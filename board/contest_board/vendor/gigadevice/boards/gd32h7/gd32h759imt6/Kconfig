@@ -1,0 +1,136 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+if ARCH_BOARD_CUSTOM
+
+config GD32H759IMT6_BOARD_SUPPORT
+	bool
+	default y
+	select ARCH_HAVE_LEDS
+	select ARCH_HAVE_BUTTONS
+	select ARCH_HAVE_IRQBUTTONS
+	---help---
+		GD32H759IMT6 Core Board hardware capability declarations.
+		ARCH_HAVE_LEDS enables the USERLED driver (/dev/userleds,
+		LED0=PC13 red, LED1=PJ8 green).
+		ARCH_HAVE_BUTTONS enables the button driver (KEY0=PC1,
+		WKUP=PA0) with EXTI interrupt support.
+
+choice
+	prompt "Select Console wiring."
+	default GD32H759IMT6_CONSOLE_USART1
+	---help---
+		Select where you will connect the console.
+
+		GD32H759IMT6 Core Board COM port (CH340X):
+
+			USART1 GPIO
+			-- ----- --------- ----
+			RX   USART1_RX PA3
+			TX   USART1_TX PA2
+			-- ----- --------- ---
+
+config GD32H759IMT6_CONSOLE_USART1
+	bool "USART1 on PA2/PA3 (CH340X COM)"
+	select GD32H7_USART1
+
+config GD32H759IMT6_CONSOLE_USART0
+	bool "USART0 on PA9/PA10"
+	select GD32H7_USART0
+
+config GD32H759IMT6_CONSOLE_NONE
+	bool "No Serial Console"
+
+endchoice # "Select Console wiring"
+
+choice
+	prompt "GD32H759I MCU Crystal Selected"
+	default GD32H759I_BOARD_USE_HXTAL
+
+config GD32H759I_BOARD_USE_HXTAL
+	bool "Use HXTAL as clock source"
+
+config GD32H759I_BOARD_USE_IRC64M
+	bool "Use IRC64M as clock source"
+
+endchoice # "MCU Crystal Selected"
+
+config GD32H759I_BOARD_HXTAL_VALUE
+	int "GD32H759I Eval Board HXTAL Value"
+	default 25000000
+	depends on GD32H759I_BOARD_USE_HXTAL
+	---help---
+		GD32H759I Eval Board HXTAL Value, default is 25MHz.
+
+choice
+	prompt "GD32H759 MCU System Frequency"
+	default GD32H759I_600MHZ
+
+config GD32H759I_600MHZ
+	bool "600 MHz"
+
+config GD32H759I_480MHZ
+	bool "480 MHz"
+
+config GD32H759I_400MHZ
+	bool "400 MHz"
+
+endchoice # "MCU System Frequency"
+
+config ARCH_BOARD_GD32H7XX_CUSTOM_CLOCKCONFIG
+	bool "Enable board-specific clock configuration"
+	default n
+	---help---
+		Enables board-specific clock configuration in board/src.
+
+
+config GD32H759IMT6_AT24_TEST
+	bool "Enable AT24 EEPROM read/write test"
+	default n
+	depends on MTD_AT24XX && (GD32H7_I2C0 || GD32H7_I2C1)
+	---help---
+		Enables AT24C02 EEPROM write/read test on startup.
+
+config GD32H759IMT6_GT911
+	bool "Enable GT911 capacitive touch (bit-bang I2C)"
+	default n
+	---help---
+		Enables the GT911 capacitive touch controller driver with
+		bit-bang I2C (SCL=PF6, SDA=PF7, INT=PG3, RST=PF8) and the
+		'gt911' NSH demo application.  Requires EXAMPLES_GT911.
+
+menu "GD32H759IMT6 GD25 Flash Configuration"
+	depends on MTD_GD25
+
+config GD32H759IMT6_GD25_BLOCKMOUNT
+	bool "Enable GD25 block device mount"
+	default n
+	---help---
+		Enable mounting of GD25 flash as a block device
+
+if GD32H759IMT6_GD25_BLOCKMOUNT
+
+choice
+	prompt "GD25 file system type"
+	default GD32H759IMT6_GD25_LITTLEFS
+
+config GD32H759IMT6_GD25_FTL
+	bool "FTL"
+
+config GD32H759IMT6_GD25_NXFFS
+	bool "NXFFS"
+	depends on FS_NXFFS
+
+config GD32H759IMT6_GD25_LITTLEFS
+	bool "LittleFS"
+	depends on FS_LITTLEFS
+
+endchoice
+
+endif # GD32H759IMT6_GD25_BLOCKMOUNT
+
+endmenu # GD25 Flash Configuration
+
+endif
