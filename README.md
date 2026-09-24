@@ -87,6 +87,10 @@ repo sync
 # 设置工具链 PATH
 export PATH=<openvela根>/prebuilts/gcc/linux-x86_64/arm-none-eabi/bin:$PATH
 
+# 关键：kconfig 工具为动态链接，必须加载其库目录，否则 configure 报
+# "libkconfig-parser-4.11.0.so: cannot open shared object file"
+export LD_LIBRARY_PATH=<openvela根>/prebuilts/kconfig-frontends/lib:$LD_LIBRARY_PATH
+
 # 配置板卡
 cd nuttx
 ./tools/configure.sh ../vendor/gigadevice/boards/gd32h7/gd32h759imt6/configs/nsh
